@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+DEFAULT_FROM_EMAIL = "Decima Support<support@decima.com>)"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -37,8 +38,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'decima_server.rest_api',
+    'rest_api',
+    "post_office",
 )
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'decima_server/static'),
+)
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -55,8 +61,9 @@ ROOT_URLCONF = 'decima_server.urls'
 WSGI_APPLICATION = 'decima_server.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'decima_server/templates'),
+)
 
 DATABASES = {
     'default': {

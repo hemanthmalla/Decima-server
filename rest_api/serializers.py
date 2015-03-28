@@ -1,5 +1,6 @@
-from decima_server.rest_api.models import *
 from rest_framework import serializers
+
+from rest_api.models import *
 
 
 class OptionSerializer(serializers.ModelSerializer):

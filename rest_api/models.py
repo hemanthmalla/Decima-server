@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 
@@ -40,3 +41,33 @@ class Vote(models.Model):
     question = models.ForeignKey(Question)
     voted = models.BooleanField(default=False)
     option = models.ForeignKey(Option, null=True)
+
+
+class DecimaQuestions(models.Model):
+    key = models.CharField(max_length=30,blank=True)
+    user = models.ForeignKey(User)
+    question = models.ForeignKey(Question)
+    status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.key)
+
+    def get_absolute_url(self):
+        return "/decima/%s/"%self.key
+
+    def send_mail(self):
+        from post_office import mail
+        mail.send(
+                recipients=[self.user.email],
+                template='decima_question', # Could be an EmailTemplate instance or name
+                context={'decima':self},
+                priority='now',
+            )
+        # print "Send mail implementation"
+        return
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = uuid.uuid4()
+            self.send_mail()
+        return super(DecimaQuestions, self).save(*args, **kwargs)
