@@ -13,6 +13,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEFAULT_FROM_EMAIL = "Decima Support<support@decima.com>)"
+EMAIL_BACKEND = 'post_office.EmailBackend'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
