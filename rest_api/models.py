@@ -27,13 +27,23 @@ class Question(models.Model):
     statement = models.CharField(max_length=200)
     options = models.ManyToManyField(Option)
     is_active = models.BooleanField(default=True)
-    date_time_asked = models.DateTimeField()
-    date_time_answered = models.DateTimeField(null=True)
+    date_time_asked = models.DateTimeField(auto_now_add=True)
+    date_time_answered = models.DateTimeField(auto_now=True)
     asked_by = models.ForeignKey(User, related_name='asked')
     answers_by = models.ManyToManyField(User, related_name='answered', through='Vote')
 
     def __str__(self):
         return self.statement
+
+    def get_absolute_url(self):
+        return "/decimo/%d/"%self.id
+
+    def get_add_option_url(self):
+        return "/decimo/question/%d/"%self.id
+
+    def get_add_invite_url(self):
+        return "/decimo/invite/%d/"%self.id
+
 
 
 class Vote(models.Model):
@@ -54,6 +64,7 @@ class DecimaQuestions(models.Model):
 
     def get_absolute_url(self):
         return "/decima/%s/"%self.key
+
 
     def send_mail(self):
         from post_office import mail

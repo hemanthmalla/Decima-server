@@ -1,12 +1,15 @@
 from django.conf.urls import url, include
 from django.contrib import admin
 
-
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^snippets/$','rest_api.views.getContactsInNetwork'),
-    url(r'^decima/(?P<key>[\w\d\-]+)/', 'rest_api.views.decimaMail'),
+    url(r'^$','rest_api.views.index_controller'),
+    url(r'^decimo/question/$', 'rest_api.views.create_question'),
+    url(r'^decimo/question/(?P<key>[\d]+)/', 'rest_api.views.add_option'),
+    url(r'^decimo/invite/(?P<key>[\d]+)/$', 'rest_api.views.question_invite'),
+    url(r'^decimo/(?P<key>[\d]+)/$', 'rest_api.views.decimo_question'),
+    url(r'^decima/(?P<key>[\w\d\-]+)/$', 'rest_api.views.decimaMail'),
     url(r'^makedecision/$', 'rest_api.views.makeDecision'),
     url(r'^createuser/$', 'rest_api.views.createUser'),
     url(r'^submit-vote/$', 'rest_api.views.submit_vote'),
@@ -15,3 +18,5 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
 ]
+
+

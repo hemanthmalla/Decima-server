@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form class="form-horizontal" action="{{ question.get_absolute_url }}" method="POST">
+        <fieldset>
+            <legend>{{ question }}</legend>
+                {% for option in question.options.all %}
+                    {{ option }}<br>
+                {% endfor  %}
+        </fieldset>
+    </form>
+    <div id="piechart_3d" style="height: 400px; width: 400px;"></div>
+{% endblock %}

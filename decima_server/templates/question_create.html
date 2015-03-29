@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="col-lg-12">
+        <form class="form-horizontal" action="/decimo/question/" method="post">
+            <legend>Add question</legend>
+            {% comment %}Add select all{% endcomment %}
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Next
+            </button>
+        </form>
+    </div>
+{% endblock %}

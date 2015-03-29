@@ -3,11 +3,12 @@ import json
 import datetime
 
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
+from rest_api.forms import OptionForm, QuestionForm
 from rest_api.serializers import *
 
 logger = logging.getLogger(__name__)
@@ -136,3 +137,70 @@ def getQuestionById(request):
     quest_id = json_data["quest_id"]
     serializer = QuestionSerializer(Question.objects.get(id=quest_id))
     return JSONResponse(serializer.data)
+
+
+def index_controller(request):
+    return render_to_response("index.html", {}, RequestContext(request))
+
+
+def start_decision_controller(request):
+    model = {}
+    model["contacts"] = User.objects.all()
+    return render_to_response('start_decision_controller.html', model)
+
+
+def question_invite(request, key):
+    model = {}
+    question = Question.objects.get(id=int(key))
+    model["question"] = Question.objects.get(id=int(key))
+    model["users"] = User.objects.filter(id__in=[1,6])
+    if request.method == "POST":
+        for user in model["users"]:
+            decimo = DecimaQuestions()
+            decimo.question = model["question"]
+            decimo.user = user
+            decimo.save()
+        return redirect(question.get_absolute_url())
+    return render_to_response('question_invite.html', model, RequestContext(request))
+
+
+def add_option(request, key):
+    model = {}
+    question = Question.objects.get(id=int(key))
+    model["question"] = question
+    option_form = OptionForm(request.POST or None)
+    if request.method == "POST" and option_form.is_valid():
+        option = option_form.save(commit=False)
+        option.quest_id = question.id
+        option.save()
+        question.options.add(option)
+        question.save()
+        return redirect(question.get_add_option_url())
+    model["form"] = option_form
+    return render_to_response('add_option.html', model, RequestContext(request))
+
+
+def decimo(request, key):
+    model = {}
+    question = Question.objects.get(id=int(key))
+    model["question"] = question
+    return render_to_response('decimo.html', model, RequestContext(request))
+
+
+def decimo_question(request, key):
+    model = {}
+    question = Question.objects.get(id=int(key))
+    model["question"] = question
+    return render_to_response('decimo_question.html', model, RequestContext(request))
+
+
+def create_question(request):
+    model = {}
+    question_form= QuestionForm(request.POST or None)
+    if request.method == "POST" and question_form.is_valid():
+        question  = question_form.save(commit=False)
+        question.asked_by_id = 1
+        question.save()
+        return redirect(question.get_add_option_url())
+    model["form"] = question_form
+    return render_to_response('create_question.html',model,RequestContext(request))

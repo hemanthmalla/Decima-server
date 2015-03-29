@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form class="form-horizontal" action="{{ question.get_absolute_url }}" method="POST">
+        <fieldset>
+            <legend>{{ question }}</legend>
+            <div class="form-group">
+                {% for option in question.options.all %}
+                    <div class="radio">
+                        <label>
+                            <input name="option" value="{{ option.id }}" type="radio">
+                            {{ option }}
+                        </label>
+                    </div>
+                {% endfor  %}
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

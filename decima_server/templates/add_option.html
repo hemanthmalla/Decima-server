@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form class="form-horizontal" action="{{ question.get_add_option_url }}" method="POST">
+        <fieldset>
+            <legend>Add Options</legend>
+            <h4>Q: {{ question }}</h4>
+            {% for option in question.options.all %}
+                <h4>{{ option }}</h4>
+            {% endfor %}
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Add </button>
+        </fieldset>
+    </form>
+    <a href="{{ question.get_add_invite_url }}">Invite People</a>
+{% endblock %}

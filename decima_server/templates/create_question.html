@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form class="form-horizontal" action="/decimo/question/" method="POST">
+        <fieldset>
+            <legend>Create a Question</legend>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </fieldset>
+    </form>
+{% endblock %}

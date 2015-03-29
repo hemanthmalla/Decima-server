@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="col-lg-12">
+
+        <form class="form-horizontal" method="post" action="{{ question.get_invite_url }}">
+            <fieldset>
+                <legend></legend>
+                <div class="form-group">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"> Select All
+                            </label>
+                        </div>
+                    </div>
+                    {% for user in users %}
+                        <h6>{{ user.email }}</h6>
+
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary">Invite</button>
+            </fieldset>
+        </form>
+        <a href="{{ question.get_absolute_url }}" >Go to Decimo</a>
+    </div>
+
+{% endblock %}
