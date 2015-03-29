@@ -11,10 +11,12 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-EMAIL_HOST = 'localhost'
 EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'bipuljain44@gmail.com'
+EMAIL_HOST_PASSWORD = 'wirqkokjhikcxggc'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "Decima Support<support@decima.com>)"
+DEFAULT_FROM_EMAIL = "Decima Support<bipuljain44@gmail.com>)"
 EMAIL_BACKEND = 'post_office.EmailBackend'
 
 
