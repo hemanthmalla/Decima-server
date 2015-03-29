@@ -153,7 +153,7 @@ def question_invite(request, key):
     model = {}
     question = Question.objects.get(id=int(key))
     model["question"] = Question.objects.get(id=int(key))
-    model["users"] = User.objects.filter(id__in=[1,6])
+    model["users"] = User.objects.all()
     if request.method == "POST":
         for user in model["users"]:
             decimo = DecimaQuestions()

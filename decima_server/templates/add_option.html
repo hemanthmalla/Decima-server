@@ -5,12 +5,23 @@
             <legend>Add Options</legend>
             <h4>Q: {{ question }}</h4>
             {% for option in question.options.all %}
-                <h4>{{ option }}</h4>
+
+                <h6>{{ forloop.counter }}. {{ option }}</h6>
             {% endfor %}
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Add </button>
+            <div class="form-group ">
+                <div class="col-xs-12">
+                    <input class="form-control" type="text" name="name" placeholder="Add your options" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group ">
+                <div class="col-xs-6 col-xs-offset-6">
+                    <button type="submit" class="btn btn-primary btn-block">Add Option</button>
+                </div>
+            </div>
         </fieldset>
     </form>
-    <a href="{{ question.get_add_invite_url }}">Invite People</a>
+    <div class="col-xs-12 text-center ">
+        <a class="text-success" href="{{ question.get_add_invite_url }}">Invite People</a>
+    </div>
 {% endblock %}

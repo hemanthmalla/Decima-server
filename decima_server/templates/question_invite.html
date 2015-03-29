@@ -4,25 +4,24 @@
 
         <form class="form-horizontal" method="post" action="{{ question.get_invite_url }}">
             <fieldset>
-                <legend></legend>
+                <legend>Invite your friends</legend>
+                {% csrf_token %}
                 <div class="form-group">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox"> Select All
-                            </label>
-                        </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> Select All
+                        </label>
                     </div>
-                    {% for user in users %}
-                        <h6>{{ user.email }}</h6>
-
-                    {% endfor %}
                 </div>
+                {% for user in users %}
+                    <h6>{{ user.email }}</h6>
+                {% endfor %}
                 <button type="submit" class="btn btn-primary">Invite</button>
             </fieldset>
         </form>
-        <a href="{{ question.get_absolute_url }}" >Go to Decimo</a>
+    </div>
+    <div class="col-lg-12 text-center">
+        <a href="{{ question.get_absolute_url }}" >Go to Report Page</a>
     </div>
 
 {% endblock %}

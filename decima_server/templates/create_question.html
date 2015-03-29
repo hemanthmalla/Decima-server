@@ -4,8 +4,17 @@
         <fieldset>
             <legend>Create a Question</legend>
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="form-group ">
+                <div class="col-xs-12">
+                    <input class="form-control" type="text" name="statement" placeholder="Write your question" {% if form.title.value %}value="{{ form.title.value }}"{% endif %} autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group ">
+                <div class="col-xs-6 col-xs-offset-6">
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </div>
+            </div>
+
         </fieldset>
     </form>
 {% endblock %}

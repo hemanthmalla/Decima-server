@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
+{% block meta %}
+    <meta http-equiv="refresh" content="30">
+{% endblock %}
 {% block content %}
-    <form class="form-horizontal" action="{{ question.get_absolute_url }}" method="POST">
-        <fieldset>
-            <legend>{{ question }}</legend>
-                {% for option in question.options.all %}
-                    {{ option }}<br>
-                {% endfor  %}
-        </fieldset>
-    </form>
+    <h2>{{ question }}</h2>
+    {% for option in question.options.all %}
+        <h4>{{ forloop.counter }}.{{ option }}</h4>
+    {% endfor %}
     <div id="piechart_3d" style="height: 400px; width: 400px;"></div>
 {% endblock %}
