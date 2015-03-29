@@ -94,10 +94,10 @@ def getQuestionsByUser(request):
     json_data = json.loads(request.body)
     user_id = json_data["user_id"]
     # this query set gets questions asked by the user
-    queryset1 = Question.objects.filter(asked_by__id=user_id)
+    queryset1 = Question.objects.filter(asked_by_id=user_id)
     # this query set gets questions this user has been asked to answer.
     # IMP TO-Do : this query needs to be rewritten using intermdeiate model - Vote
-    queryset2 = Question.objects.filter(answers_by__id=user_id)  # doesn't work
+    queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question',flat=True))
     serializer = QuestionSerializer(queryset1 | queryset2, many=True)
     return JSONResponse(serializer.data)
 
