@@ -140,7 +140,9 @@ def getQuestionById(request):
 
 
 def index_controller(request):
-    return render_to_response("index.html", {}, RequestContext(request))
+    model={}
+    model["questions"] = Question.objects.all().order_by("-date_time_asked")[:5]
+    return render_to_response("index.html", model, RequestContext(request))
 
 
 def start_decision_controller(request):

@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="jumbotron text-center">
-        <h1>Decimo</h1>
-        <h5>Making decision making easy and informative.</h5>
+        <h1>Decima</h1>
+        <h4>Simplifying Decision Making.</h4>
+        <h4>Decima assists in the process of simple Decision Making with your friends.</h4>
         <a class="btn btn-primary" style="margin-top: 15px;" href="/decimo/question/">Start Decision Making now >></a>
     </div>
+    <h5>Recent Questions</h5>
+    {% for question in questions %}
+        <p>
+            {{ forloop.counter }}. <a href="{{ question.get_absolute_url }}">{{ question }}</a>
+        </p>
+    {% endfor%}
 {% endblock %}
