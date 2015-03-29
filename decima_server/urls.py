@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^decima/(?P<key>[\w\d\-]+)/', 'rest_api.views.decimaMail'),
     url(r'^makedecision/$', 'rest_api.views.makeDecision'),
     url(r'^createuser/$', 'rest_api.views.createUser'),
+    url(r'^submit-vote/$', 'rest_api.views.submit_vote'),
     url(r'^getquestionbyid/$', 'rest_api.views.getQuestionById'),
     url(r'^getquestionsbyuser/$', 'rest_api.views.getQuestionsByUser'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

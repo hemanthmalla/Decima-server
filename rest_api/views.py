@@ -2,10 +2,11 @@ import logging
 import json
 import datetime
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 from rest_api.serializers import *
 
@@ -31,6 +32,7 @@ def createUser(request):
     if serializer.is_valid():
         serializer.save()
         return JSONResponse(serializer.data, status=201)
+    logger.debug(serializer.errors)
     return JSONResponse(serializer.errors, status=400)
 
 
@@ -55,6 +57,30 @@ def decimaMail(request, key):
         decima.save()
         return render_to_response("successful.html", model, RequestContext(request))
     return render_to_response("decimaQuestionForm.html", model, RequestContext(request))
+
+
+@csrf_exempt
+def submit_vote(request):
+    json_data = json.loads(request.body)
+    question = int(json_data["question"])
+    option_id = int(json_data["option"])
+    user_id = int(json_data["user"])
+    try:
+        vote = Vote.objects.get(question_id=question, user_id_id=user_id)
+        if vote.voted == True:
+            return JSONResponse({}, status=status.HTTP_400_BAD_REQUEST)
+    except Vote.DoesNotExist:
+        pass
+    vote = Vote()
+    vote.question_id = question
+    vote.user_id_id = user_id
+    vote.option_id = option_id
+    vote.voted = True
+    vote.save()
+    option = Option.objects.get(id=option_id)
+    option.votes += 1
+    option.save()
+    return JsonResponse({}, status=status.HTTP_200_OK)
 
 
 @csrf_exempt
@@ -97,7 +123,8 @@ def getQuestionsByUser(request):
     queryset1 = Question.objects.filter(asked_by_id=user_id)
     # this query set gets questions this user has been asked to answer.
     # IMP TO-Do : this query needs to be rewritten using intermdeiate model - Vote
-    queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question',flat=True))
+    queryset2 = Question.objects.filter(
+        id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
     serializer = QuestionSerializer(queryset1 | queryset2, many=True)
     return JSONResponse(serializer.data)
 
