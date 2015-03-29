@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="jumbotron text-center">
+        <h1>Decimo</h1>
+        <h5>Making decision making easy and informative.</h5>
+    </div>
     <form class="form-horizontal" action="{{ decima.get_absolute_url }}" method="POST">
         <fieldset>
             <legend>{{ decima.question }}</legend>
