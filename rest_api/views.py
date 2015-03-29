@@ -195,7 +195,7 @@ def decimo_question(request, key):
     model["question"] = question
     decima = DecimaQuestions()
     decima.question = question
-    model["decima"] = question
+    model["decima"] = decima
     return render_to_response('decimo_question.html', model, RequestContext(request))
 
 
