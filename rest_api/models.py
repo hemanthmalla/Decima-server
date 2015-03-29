@@ -44,7 +44,7 @@ class Vote(models.Model):
 
 
 class DecimaQuestions(models.Model):
-    key = models.CharField(max_length=30,blank=True)
+    key = models.CharField(max_length=50,blank=True)
     user = models.ForeignKey(User)
     question = models.ForeignKey(Question)
     status = models.BooleanField(default=True)
