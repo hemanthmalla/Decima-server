@@ -50,6 +50,8 @@ def decimaMail(request, key):
         vote.option = option
         vote.save()
         decima.status = False
+        option.votes += 1
+        option.save()
         decima.save()
         return render_to_response("successful.html", model, RequestContext(request))
     return render_to_response("decimaQuestionForm.html", model, RequestContext(request))
