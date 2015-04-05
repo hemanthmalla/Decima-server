@@ -2,6 +2,7 @@ import logging
 import json
 import datetime
 
+from gcm import GCM
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -10,6 +11,7 @@ from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 from rest_api.forms import OptionForm, QuestionForm
 from rest_api.serializers import *
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -108,9 +110,16 @@ def makeDecision(request):
         option = Option(name=i, quest_id=question.id)
         option.save()
         question.options.add(option)
+    gcm_ids = []
     for i in asked_to:
-        vote = Vote(user_id=User.objects.get(phone=i), question=question)
+        user = User.objects.get(phone=i)
+        vote = Vote(user_id=user, question=question)
         vote.save()
+        gcm_ids.append(user.gcm_id)
+    gcm = GCM(settings.GCM_API_KEY)
+    data = {"action": "Hello device"}
+    #gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+    #logger.debug(gcm_status)
     serializer = QuestionSerializer(question)
     return JSONResponse(serializer.data)
 
@@ -124,8 +133,8 @@ def getQuestionsByUser(request):
     queryset1 = Question.objects.filter(asked_by_id=user_id)
     # this query set gets questions this user has been asked to answer.
     # IMP TO-Do : this query needs to be rewritten using intermdeiate model - Vote
-    queryset2 = Question.objects.filter(
-        id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
+    # queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
+    queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id))
     serializer = QuestionSerializer(queryset1 | queryset2, many=True)
     return JSONResponse(serializer.data)
 

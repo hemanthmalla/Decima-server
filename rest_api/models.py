@@ -15,7 +15,7 @@ class Option(models.Model):
 class User(models.Model):
     full_name = models.CharField(max_length=128)
     email = models.EmailField()
-    phone = models.CharField(max_length=10)
+    phone = models.CharField(max_length=13)
     gcm_id = models.CharField(max_length=200)
     fb_id = models.CharField(max_length=100)
 
@@ -28,7 +28,7 @@ class Question(models.Model):
     options = models.ManyToManyField(Option)
     is_active = models.BooleanField(default=True)
     date_time_asked = models.DateTimeField(auto_now_add=True)
-    date_time_answered = models.DateTimeField(auto_now=True)
+    date_time_answered = models.DateTimeField(null=True)
     asked_by = models.ForeignKey(User, related_name='asked')
     answers_by = models.ManyToManyField(User, related_name='answered', through='Vote')
 
@@ -54,7 +54,7 @@ class Vote(models.Model):
 
 
 class DecimaQuestions(models.Model):
-    key = models.CharField(max_length=50,blank=True)
+    key = models.CharField(max_length=50, blank=True)
     user = models.ForeignKey(User)
     question = models.ForeignKey(Question)
     status = models.BooleanField(default=True)

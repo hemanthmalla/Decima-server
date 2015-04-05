@@ -18,6 +18,7 @@ EMAIL_HOST_PASSWORD = 'wirqkokjhikcxggc'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "Decima Support<bipuljain44@gmail.com>)"
 EMAIL_BACKEND = 'post_office.EmailBackend'
+GCM_API_KEY = 'AIzaSyCDJf1HfV7EniXFYPihb3bGI82V732Z6oU'
 
 
 # Quick-start development settings - unsuitable for production
