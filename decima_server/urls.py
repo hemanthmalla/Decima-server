@@ -5,6 +5,7 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^$','rest_api.views.index_controller'),
+    url(r'^getContacts/$', 'rest_api.views.getContactsInNetwork'),
     url(r'^decimo/question/$', 'rest_api.views.create_question'),
     url(r'^decimo/question/(?P<key>[\d]+)/', 'rest_api.views.add_option'),
     url(r'^decimo/invite/(?P<key>[\d]+)/$', 'rest_api.views.question_invite'),
