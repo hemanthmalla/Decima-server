@@ -117,9 +117,9 @@ def makeDecision(request):
         vote.save()
         gcm_ids.append(user.gcm_id)
     gcm = GCM(settings.GCM_API_KEY)
-    data = {"action": "Hello device"}
-    #gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
-    #logger.debug(gcm_status)
+    data = {"action": "Requesting your Opinion"}
+    gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+    logger.debug(gcm_status)
     serializer = QuestionSerializer(question)
     return JSONResponse(serializer.data)
 
