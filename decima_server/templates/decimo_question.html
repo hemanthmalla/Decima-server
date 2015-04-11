@@ -3,17 +3,6 @@
     <meta http-equiv="refresh" content="30">
 {% endblock %}
 {% block content %}
-    <div class="jumbotron text-center">
-        <h1>Decima</h1>
-        <h4>Simplifying Decision Making.</h4>
-        <h4>Decima assists in the process of simple Decision Making with your friends.</h4>
-    </div>
-    <div class="col-lg-12">
-        <h2>Q. {{ question }}</h2>
-        {% for option in question.options.all %}
-            <h4>{{ forloop.counter }}.{{ option }}</h4>
-        {% endfor %}
-    </div>
 
     <div id="piechart_3d" style="height: 400px; width: 400px;"></div>
 {% endblock %}
