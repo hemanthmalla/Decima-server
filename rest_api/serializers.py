@@ -1,8 +1,8 @@
 from rest_framework import serializers
-
+import logging
 from rest_api.models import *
 
-
+logger = logging.getLogger(__name__)
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
@@ -24,7 +24,9 @@ class QuestionSerializer(serializers.ModelSerializer):
     asked_by = UserSerializer()
     answers_by = UserSerializer(many=True)
     def get_has_voted(self, obj):
-        return Vote.objects.get(user_id=obj.asked_by,question=obj).voted
+        user = self.context.get("user_id")
+        logger.debug(user)
+        return Vote.objects.get(user_id_id=user, question=obj).voted
 
     class Meta():
         model = Question

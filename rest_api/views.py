@@ -136,7 +136,7 @@ def getQuestionsByUser(request):
     # IMP TO-Do : this query needs to be rewritten using intermdeiate model - Vote
     queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
     #queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id))
-    serializer = QuestionSerializer(queryset1 | queryset2, many=True)
+    serializer = QuestionSerializer(queryset1 | queryset2, many=True, context={'user_id': user_id})
     return JSONResponse(serializer.data)
 
 
