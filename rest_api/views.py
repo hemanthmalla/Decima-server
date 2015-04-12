@@ -77,8 +77,9 @@ def submit_vote(request):
     question_obj = Question.objects.get(id=question)
     option_obj = Option.objects.get(id=option_id)
     user_obj = User.objects.get(id=user_id)
-    vote = Vote.objects.get(user_id=user_obj,question=question_obj,option=option_obj)
+    vote = Vote.objects.get(user_id=user_obj,question=question_obj)
     vote.voted = True
+    vote.option = option_obj
     vote.save()
     option = Option.objects.get(id=option_id)
     option.votes += 1
