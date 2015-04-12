@@ -11,6 +11,11 @@ class OptionSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = ('id', 'full_name', 'email', 'phone')
+
+class UserSerializerSecure(serializers.ModelSerializer):
+    class Meta:
+        model = User
         fields = ('full_name', 'email', 'phone')
 
 
@@ -21,8 +26,8 @@ class VoteSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
     has_voted = serializers.SerializerMethodField()
-    asked_by = UserSerializer()
-    answers_by = UserSerializer(many=True)
+    asked_by = UserSerializerSecure()
+    answers_by = UserSerializerSecure(many=True)
     def get_has_voted(self, obj):
         user = self.context.get("user_id")
         logger.debug(user)

@@ -93,7 +93,7 @@ def getContactsInNetwork(request):
     json_data = json.loads(request.body)
     user_contacts = json_data["contacts"]
     users_in_network = User.objects.filter(phone__in=user_contacts)
-    serializer = UserSerializer(users_in_network, many=True)
+    serializer = UserSerializerSecure(users_in_network, many=True)
     return JSONResponse(serializer.data)
 
 
