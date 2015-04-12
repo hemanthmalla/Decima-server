@@ -6,7 +6,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Decima {% block title %}{% endblock %}</title>
     {% block meta %}
     {% endblock %}
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" />
@@ -24,7 +23,8 @@
 
             var options = {
                 title: '{{ question }}',
-                is3D: true
+                is3D: true,
+                legend:{position: 'labeled'}
             };
 
             var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));

@@ -74,10 +74,10 @@ def submit_vote(request):
             return JSONResponse({}, status=status.HTTP_400_BAD_REQUEST)
     except Vote.DoesNotExist:
         pass
-    vote = Vote()
-    vote.question_id = question
-    vote.user_id_id = user_id
-    vote.option_id = option_id
+    question_obj = Question.objects.get(id=question)
+    option_obj = Option.objects.get(id=option_id)
+    user_obj = User.objects.get(id=user_id)
+    vote = Vote.objects.get(user_id=user_obj,question=question_obj,option=option_obj)
     vote.voted = True
     vote.save()
     option = Option.objects.get(id=option_id)
