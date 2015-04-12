@@ -133,8 +133,8 @@ def getQuestionsByUser(request):
     queryset1 = Question.objects.filter(asked_by_id=user_id)
     # this query set gets questions this user has been asked to answer.
     # IMP TO-Do : this query needs to be rewritten using intermdeiate model - Vote
-    # queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
-    queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id))
+    queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
+    #queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id))
     serializer = QuestionSerializer(queryset1 | queryset2, many=True)
     return JSONResponse(serializer.data)
 
