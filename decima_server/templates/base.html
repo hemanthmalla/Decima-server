@@ -24,7 +24,7 @@
             var options = {
                 title: '{{ question }}',
                 is3D: true,
-                legend:{position: 'labeled'}
+                legend:{position: 'top',maxLines:10}
             };
 
             var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
@@ -35,14 +35,6 @@
 </head>
 <body>
 <div class="container">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">Decima</a>
-    </div>
     {% block content %}
     {% endblock %}
 </div>

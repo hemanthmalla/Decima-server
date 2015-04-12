@@ -1,9 +1,10 @@
 ;; gitignore for Django using pyCharm
  
 ;;extensions to ignore
-*.log
+mysite.log
 *.pot
 *.pyc
+rest_api/*.pyc
  
 ;;directories to ignore
 .idea/ 
