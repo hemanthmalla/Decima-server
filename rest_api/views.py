@@ -31,12 +31,15 @@ class JSONResponse(HttpResponse):
 def createUser(request):
     logger.debug(request.body)
     json_data = json.loads(request.body)
-    serializer = UserSerializer(data=json_data)
-    if serializer.is_valid():
-        serializer.save()
-        return JSONResponse(serializer.data, status=201)
-    logger.debug(serializer.errors)
-    return JSONResponse(serializer.errors, status=400)
+    if User.objects.filter(phone=json_data["phone"]).__len__() == 0:
+        serializer = UserSerializer(data=json_data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        logger.debug(serializer.errors)
+        return JSONResponse(serializer.errors, status=400)
+    else:
+        return HttpResponse(status=400)
 
 
 def decimaMail(request, key):
