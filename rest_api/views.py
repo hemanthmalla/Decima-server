@@ -156,7 +156,6 @@ def getQuestionById(request):
     return JSONResponse(serializer.data)
 
 
-
 @api_view(["GET"])
 def question_invite(request, key):
     model = {}
@@ -237,17 +236,15 @@ def get_myntra_product_details(pid):
     return pr
 
 
-
-@api_view(["GET","POST"])
+@api_view(["GET", "POST"])
 @csrf_exempt
-def post_product(request, key=None):
-    pid = request.GET.get("id")
+def post_product(request):
     json_data = json.loads(request.body)
     user_id = json_data["user_id"]
+    pid = json_data["product_id"]
     pr = get_myntra_product_details(pid)
-    print pid, key, pr
-    if key:
-        question = Question.objects.get(id=int(key))
+    if json_data.get("group_id", None):
+        question = Question.objects.get(id=int(json_data.get("group_id")))
     else:
         question = Question()
         question.statement = "What's there in a name?"
@@ -256,7 +253,7 @@ def post_product(request, key=None):
         question.save()
     question.products.add(pr)
     question.save()
-    return Response({"user_id":user_id,"question":QuestionSerializer(question).data}, status=status.HTTP_200_OK)
+    return Response({"user_id": user_id, "group": QuestionSerializer(question).data}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
