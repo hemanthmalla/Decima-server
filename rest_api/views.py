@@ -237,21 +237,26 @@ def get_myntra_product_details(pid):
     return pr
 
 
-@api_view(["GET"])
+
+@api_view(["GET","POST"])
+@csrf_exempt
 def post_product(request, key=None):
     pid = request.GET.get("id")
+    json_data = json.loads(request.body)
+    user_id = json_data["user_id"]
     pr = get_myntra_product_details(pid)
     print pid, key, pr
     if key:
         question = Question.objects.get(id=int(key))
     else:
         question = Question()
-        question.statement = "Hemanth's Child Marriage"
+        question.statement = "What's there in a name?"
         question.is_active = False
+        question.asked_by_id = user_id
         question.save()
     question.products.add(pr)
     question.save()
-    return Response(QuestionSerializer(question).data, status=status.HTTP_200_OK)
+    return Response({"user_id":user_id,"question":QuestionSerializer(question).data}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
