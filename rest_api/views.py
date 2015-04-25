@@ -24,7 +24,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
     def __init__(self):
         sleekxmpp.ClientXMPP.__init__(self, "admin@localhost", "decima123")
         self.room = uuid.uuid4()
-        self.add_event_handler("session_start", self.start)
+        # self.add_event_handler("session_start", self)
 
     def add_user(self, nick):
         self.get_roster()
@@ -182,10 +182,12 @@ def question_invite(request, key):
     json_data = json.loads(request.body)
     model["users"] = User.objects.filter(id__in=json_data.get("user_ids"))
     if request.method == "POST":
+
         gcm_ids = [user.gcm_id for user in model["users"]]
-        gcm = GCM(settings.GCM_API_KEY)
-        data = {"action": "Requesting your Opinion"}
-        gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+        # gcm = GCM(settings.GCM_API_KEY)
+        # data = {"action": "Requesting your Opinion"}
+        # gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+        #
         xmpp = MUCBot()
         xmpp.register_plugin('xep_0030')  # Service Discovery
         xmpp.register_plugin('xep_0045')
@@ -262,8 +264,8 @@ def get_myntra_product_details(pid):
     return pr
 
 
-@api_view(["GET", "POST"])
 @csrf_exempt
+@api_view(["GET", "POST"])
 def post_product(request):
     json_data = json.loads(request.body)
     user_id = json_data["user_id"]
