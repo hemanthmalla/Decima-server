@@ -1,6 +1,7 @@
 import logging
 import json
 import datetime
+import urllib
 
 from gcm import GCM
 from django.http import HttpResponse, JsonResponse
@@ -8,7 +9,9 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from rest_api.forms import OptionForm, QuestionForm
 from rest_api.serializers import *
 from django.conf import settings
@@ -80,7 +83,7 @@ def submit_vote(request):
     question_obj = Question.objects.get(id=question)
     option_obj = Option.objects.get(id=option_id)
     user_obj = User.objects.get(id=user_id)
-    vote = Vote.objects.get(user_id=user_obj,question=question_obj)
+    vote = Vote.objects.get(user_id=user_obj, question=question_obj)
     vote.voted = True
     vote.option = option_obj
     vote.save()
@@ -137,8 +140,9 @@ def getQuestionsByUser(request):
     queryset1 = Question.objects.filter(asked_by_id=user_id)
     # this query set gets questions this user has been asked to answer.
     # IMP TO-Do : this query needs to be rewritten using intermdeiate model - Vote
-    queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
-    #queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id))
+    queryset2 = Question.objects.filter(
+        id__in=Vote.objects.filter(user_id_id=user_id).values_list('question', flat=True))
+    # queryset2 = Question.objects.filter(id__in=Vote.objects.filter(user_id_id=user_id))
     serializer = QuestionSerializer(queryset1 | queryset2, many=True, context={'user_id': user_id})
     return JSONResponse(serializer.data)
 
@@ -152,30 +156,19 @@ def getQuestionById(request):
     return JSONResponse(serializer.data)
 
 
-def index_controller(request):
-    model={}
-    model["questions"] = Question.objects.all().order_by("-date_time_asked")[:5]
-    return render_to_response("index.html", model, RequestContext(request))
 
-
-def start_decision_controller(request):
-    model = {}
-    model["contacts"] = User.objects.all()
-    return render_to_response('start_decision_controller.html', model)
-
-
+@api_view(["GET"])
 def question_invite(request, key):
     model = {}
     question = Question.objects.get(id=int(key))
     model["question"] = Question.objects.get(id=int(key))
     model["users"] = User.objects.all()
     if request.method == "POST":
-        for user in model["users"]:
-            decimo = DecimaQuestions()
-            decimo.question = model["question"]
-            decimo.user = user
-            decimo.save()
-        return redirect(question.get_absolute_url())
+        gcm_ids = [user.gcm_id for user in model["users"]]
+        gcm = GCM(settings.GCM_API_KEY)
+        data = {"action": "Requesting your Opinion"}
+        gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+        return Response({}, status=status.HTTP_200_OK)
     return render_to_response('question_invite.html', model, RequestContext(request))
 
 
@@ -214,11 +207,60 @@ def decimo_question(request, key):
 
 def create_question(request):
     model = {}
-    question_form= QuestionForm(request.POST or None)
+    question_form = QuestionForm(request.POST or None)
     if request.method == "POST" and question_form.is_valid():
-        question  = question_form.save(commit=False)
+        question = question_form.save(commit=False)
         question.asked_by_id = 1
         question.save()
         return redirect(question.get_add_option_url())
     model["form"] = question_form
-    return render_to_response('create_question.html',model,RequestContext(request))
+    return render_to_response('create_question.html', model, RequestContext(request))
+
+
+def get_myntra_product_details(pid):
+    try:
+        return Products.objects.get(identifier=pid)
+    except Products.DoesNotExist:
+        pass
+
+    pr = Products()
+    url = "http://developer.myntra.com/style/%s" % pid
+    obj = json.loads(urllib.urlopen(url).read()).get("data", {})
+    pr.title = obj.get("productDisplayName")
+    pr.final_price = obj.get("discountedPrice")
+    pr.item_price = obj.get("price")
+    pr.discount_percent = ((pr.item_price - pr.final_price) * 100) / pr.item_price
+    pr.source = obj.get("landingPageUrl")
+    pr.image = obj.get("styleImages").get("default").get("imageURL")
+    pr.identifier = pid
+    pr.save()
+    return pr
+
+
+@api_view(["GET"])
+def post_product(request, key=None):
+    pid = request.GET.get("id")
+    pr = get_myntra_product_details(pid)
+    print pid, key, pr
+    if key:
+        question = Question.objects.get(id=int(key))
+    else:
+        question = Question()
+        question.statement = "Hemanth's Child Marriage"
+        question.is_active = False
+        question.save()
+    question.products.add(pr)
+    question.save()
+    return Response(QuestionSerializer(question).data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def index_controller(request):
+    return Response(QuestionSerializer(Question.objects.all().order_by("-date_time_asked"), many=True).data,
+                    status=status.HTTP_200_OK)
+
+
+def start_decision_controller(request):
+    model = {}
+    model["contacts"] = User.objects.all()
+    return render_to_response('start_decision_controller.html', model)

@@ -13,10 +13,6 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 EMAIL_PORT = 587
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'bipuljain44@gmail.com'
-EMAIL_HOST_PASSWORD = 'wirqkokjhikcxggc'
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "Decima Support<bipuljain44@gmail.com>)"
 EMAIL_BACKEND = 'post_office.EmailBackend'
 GCM_API_KEY = 'AIzaSyCDJf1HfV7EniXFYPihb3bGI82V732Z6oU'
 
@@ -32,7 +28,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

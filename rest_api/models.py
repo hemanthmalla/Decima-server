@@ -23,14 +23,29 @@ class User(models.Model):
         return '("%s","%s")' % (self.full_name, self.phone)
 
 
+
+
+class Products(models.Model):
+    identifier = models.IntegerField()
+    title = models.CharField(max_length=100)
+    source = models.CharField(max_length=256,default="")
+    image = models.CharField(max_length=256)
+    final_price = models.IntegerField(default=0)
+    item_price = models.IntegerField(default=0)
+    discount_percent = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.title
+
 class Question(models.Model):
     statement = models.CharField(max_length=200)
     options = models.ManyToManyField(Option)
+    products = models.ManyToManyField(Products,blank=True,null=True)
     is_active = models.BooleanField(default=True)
     date_time_asked = models.DateTimeField(auto_now_add=True)
     date_time_answered = models.DateTimeField(null=True)
-    asked_by = models.ForeignKey(User, related_name='asked')
-    answers_by = models.ManyToManyField(User, related_name='answered', through='Vote')
+    asked_by = models.ForeignKey(User, related_name='asked',blank=True,null=True)
+    answers_by = models.ManyToManyField(User, related_name='answered', through='Vote',blank=True,null=True)
 
     def __str__(self):
         return self.statement
@@ -43,6 +58,9 @@ class Question(models.Model):
 
     def get_add_invite_url(self):
         return "/decimo/invite/%d/"%self.id
+
+
+
 
 
 
@@ -82,3 +100,5 @@ class DecimaQuestions(models.Model):
             self.key = uuid.uuid4()
             self.send_mail()
         return super(DecimaQuestions, self).save(*args, **kwargs)
+
+
