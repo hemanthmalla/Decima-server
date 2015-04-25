@@ -12,11 +12,28 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+import sleekxmpp
 from rest_api.forms import OptionForm, QuestionForm
 from rest_api.serializers import *
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+
+class MUCBot(sleekxmpp.ClientXMPP):
+    def __init__(self):
+        sleekxmpp.ClientXMPP.__init__(self, "admin@localhost", "decima123")
+        self.room = uuid.uuid4()
+        self.add_event_handler("session_start", self.start)
+
+    def add_user(self, nick):
+        self.get_roster()
+        self.send_presence()
+        self.plugin['xep_0045'].joinMUC(self.room,
+                                        nick,
+                                        # If a room password is needed, use:
+                                        # password=the_room_password,
+                                        wait=True)
 
 
 class JSONResponse(HttpResponse):
@@ -156,18 +173,27 @@ def getQuestionById(request):
     return JSONResponse(serializer.data)
 
 
-@api_view(["GET"])
+@csrf_exempt
+@api_view(["GET", "POST"])
 def question_invite(request, key):
     model = {}
     question = Question.objects.get(id=int(key))
     model["question"] = Question.objects.get(id=int(key))
-    model["users"] = User.objects.all()
+    json_data = json.loads(request.body)
+    model["users"] = User.objects.filter(id__in=json_data.get("user_ids"))
     if request.method == "POST":
         gcm_ids = [user.gcm_id for user in model["users"]]
         gcm = GCM(settings.GCM_API_KEY)
         data = {"action": "Requesting your Opinion"}
         gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
-        return Response({}, status=status.HTTP_200_OK)
+        xmpp = MUCBot()
+        xmpp.register_plugin('xep_0030')  # Service Discovery
+        xmpp.register_plugin('xep_0045')
+        xmpp.register_plugin('xep_0199')
+        for user in model["users"]:
+            xmpp.add_user(user.id)
+
+        return Response({"room_id": xmpp.room}, status=status.HTTP_200_OK)
     return render_to_response('question_invite.html', model, RequestContext(request))
 
 
