@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^getContacts/$', 'rest_api.views.getContactsInNetwork'),
     url(r'^decimo/question/$', 'rest_api.views.create_question'),
     url(r'^decimo/question/(?P<key>[\d]+)/$', 'rest_api.views.add_option'),
-    url(r'^decimo/invite/(?P<key>[\d]+)/$', 'rest_api.views.question_invite'),
+    url(r'^decima/invite/$', 'rest_api.views.question_invite'),
     url(r'^decima/group/msg/$', 'rest_api.views.msg_text'),
     url(r'^decima/product/post/$', 'rest_api.views.post_product'),
     url(r'^decimo/(?P<key>[\d]+)/$', 'rest_api.views.decimo_question'),

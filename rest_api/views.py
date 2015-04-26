@@ -198,10 +198,10 @@ def getQuestionById(request):
 @api_view(["GET", "POST"])
 def question_invite(request, key):
     model = {}
-    question = Question.objects.get(id=int(key))
-    model["question"] = Question.objects.get(id=int(key))
     json_data = json.loads(request.body)
-    model["users"] = User.objects.filter(id__in=json_data.get("user_ids"))
+    question = Question.objects.get(id=int(json_data.get("group_id")))
+    model["question"] = question
+    model["users"] = User.objects.filter(phone__in=json_data.get("user_ids"))
     if request.method == "POST":
         for user in model["users"]:
             question.peers_involved.add(user)
