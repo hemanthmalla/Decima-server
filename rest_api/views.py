@@ -196,7 +196,7 @@ def getQuestionById(request):
 
 @csrf_exempt
 @api_view(["GET", "POST"])
-def question_invite(request, key):
+def question_invite(request):
     model = {}
     json_data = json.loads(request.body)
     question = Question.objects.get(id=int(json_data.get("group_id")))
