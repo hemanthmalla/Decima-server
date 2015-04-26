@@ -307,6 +307,8 @@ def post_product(request):
     else:
         question = Question()
         question.statement = "What's there in a name?"
+        if json_data.get("title",None):
+            question.statement = json_data.get("title")
         question.is_active = False
         question.asked_by_id = user_id
         question.save()
