@@ -23,12 +23,10 @@ class User(models.Model):
         return '("%s","%s")' % (self.full_name, self.phone)
 
 
-
-
 class Products(models.Model):
     identifier = models.IntegerField()
     title = models.CharField(max_length=100)
-    source = models.CharField(max_length=256,default="")
+    source = models.CharField(max_length=256, default="")
     image = models.CharField(max_length=256)
     final_price = models.IntegerField(default=0)
     item_price = models.IntegerField(default=0)
@@ -37,31 +35,29 @@ class Products(models.Model):
     def __str__(self):
         return self.title
 
+
 class Question(models.Model):
     statement = models.CharField(max_length=200)
-    options = models.ManyToManyField(Option)
-    products = models.ManyToManyField(Products,blank=True,null=True)
+    options = models.ManyToManyField(Option,blank=True,null=True)
+    products = models.ManyToManyField(Products, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     date_time_asked = models.DateTimeField(auto_now_add=True)
     date_time_answered = models.DateTimeField(null=True)
-    asked_by = models.ForeignKey(User, related_name='asked',blank=True,null=True)
-    answers_by = models.ManyToManyField(User, related_name='answered', through='Vote',blank=True,null=True)
+    peers_involved = models.ManyToManyField(User, blank=True, null=True)
+    asked_by = models.ForeignKey(User, related_name='asked', blank=True, null=True)
+    answers_by = models.ManyToManyField(User, related_name='answered', through='Vote', blank=True, null=True)
 
     def __str__(self):
         return self.statement
 
     def get_absolute_url(self):
-        return "/decimo/%d/"%self.id
+        return "/decimo/%d/" % self.id
 
     def get_add_option_url(self):
-        return "/decimo/question/%d/"%self.id
+        return "/decimo/question/%d/" % self.id
 
     def get_add_invite_url(self):
-        return "/decimo/invite/%d/"%self.id
-
-
-
-
+        return "/decimo/invite/%d/" % self.id
 
 
 class Vote(models.Model):
@@ -81,17 +77,18 @@ class DecimaQuestions(models.Model):
         return str(self.key)
 
     def get_absolute_url(self):
-        return "/decima/%s/"%self.key
+        return "/decima/%s/" % self.key
 
 
     def send_mail(self):
         from post_office import mail
+
         mail.send(
-                recipients=[self.user.email],
-                template='decima_question', # Could be an EmailTemplate instance or name
-                context={'decima':self},
-                priority='now',
-            )
+            recipients=[self.user.email],
+            template='decima_question',  # Could be an EmailTemplate instance or name
+            context={'decima': self},
+            priority='now',
+        )
         # print "Send mail implementation"
         return
 

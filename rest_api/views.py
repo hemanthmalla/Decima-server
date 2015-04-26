@@ -2,6 +2,7 @@ import logging
 import json
 import datetime
 import urllib
+from django.utils.text import slugify
 
 from gcm import GCM
 from django.http import HttpResponse, JsonResponse
@@ -24,16 +25,36 @@ class MUCBot(sleekxmpp.ClientXMPP):
     def __init__(self):
         sleekxmpp.ClientXMPP.__init__(self, "admin@localhost", "decima123")
         self.room = uuid.uuid4()
-        # self.add_event_handler("session_start", self)
+        self.register_plugin('xep_0045')
+        self.register_plugin('xep_0030')  # Service Discovery
+        self.register_plugin('xep_0199')
+        self.add_event_handler("session_start", self.start)
+
+    def start(self, event):
+        """
+        Process the session_start event.
+
+        Typical actions for the session_start event are
+        requesting the roster and broadcasting an initial
+        presence stanza.
+
+        Arguments:
+            event -- An empty dictionary. The session_start
+                     event does not provide any additional
+                     data.
+        """
+        print "In get roster ", self.get_roster()
+        print "In get presence ", self.send_presence()
 
     def add_user(self, nick):
-        self.get_roster()
-        self.send_presence()
+        print "room ,", self.room
+        print "Coming here ", nick
         self.plugin['xep_0045'].joinMUC(self.room,
-                                        nick,
+                                        slugify(nick),
                                         # If a room password is needed, use:
                                         # password=the_room_password,
                                         wait=True)
+        self.send_message(mto=self.room, mbody="Testing ", mtype="groupchat")
 
 
 class JSONResponse(HttpResponse):
@@ -182,21 +203,31 @@ def question_invite(request, key):
     json_data = json.loads(request.body)
     model["users"] = User.objects.filter(id__in=json_data.get("user_ids"))
     if request.method == "POST":
-
-        gcm_ids = [user.gcm_id for user in model["users"]]
-        # gcm = GCM(settings.GCM_API_KEY)
-        # data = {"action": "Requesting your Opinion"}
-        # gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
-        #
-        xmpp = MUCBot()
-        xmpp.register_plugin('xep_0030')  # Service Discovery
-        xmpp.register_plugin('xep_0045')
-        xmpp.register_plugin('xep_0199')
         for user in model["users"]:
-            xmpp.add_user(user.id)
-
-        return Response({"room_id": xmpp.room}, status=status.HTTP_200_OK)
+            question.peers_involved.add(user)
+        gcm_ids = [user.gcm_id for user in model["users"]]
+        gcm = GCM(settings.GCM_API_KEY)
+        data = {"action": "Requesting your Opinion"}
+        gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+        return Response({}, status=status.HTTP_200_OK)
     return render_to_response('question_invite.html', model, RequestContext(request))
+
+
+@csrf_exempt
+@api_view(["GET", "POST", ])
+def msg_text(request):
+    json_data = json.loads(request.body)
+    msg = json_data.get("msg")
+    group_id = json_data.get("group_id")
+    group = Question.objects.get(id=group_id)
+    if request.method == "POST":
+        peers_involved = group.peers_involved.all()
+        if peers_involved:
+            gcm_ids = [peer.gcm_id for peer in peers_involved]
+            gcm = GCM(settings.GCM_API_KEY)
+            data = {"action": "Requesting your Opinion", "msg": msg}
+            gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+        return Response({}, status=status.HTTP_200_OK)
 
 
 def add_option(request, key):
