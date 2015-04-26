@@ -207,7 +207,7 @@ def question_invite(request):
             question.peers_involved.add(user)
         gcm_ids = [user.gcm_id for user in model["users"]]
         gcm = GCM(settings.GCM_API_KEY)
-        data = {"action": "Requesting your Opinion"}
+        data = {"action": "invite","msg":"You are invited"}
         gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
         return Response({}, status=status.HTTP_200_OK)
     return render_to_response('question_invite.html', model, RequestContext(request))
@@ -225,7 +225,7 @@ def msg_text(request):
         if peers_involved:
             gcm_ids = [peer.gcm_id for peer in peers_involved]
             gcm = GCM(settings.GCM_API_KEY)
-            data = {"action": "Requesting your Opinion", "msg": msg}
+            data = {"action": "chat", "msg": msg}
             gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
         return Response({}, status=status.HTTP_200_OK)
 
