@@ -20,43 +20,6 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-
-class MUCBot(sleekxmpp.ClientXMPP):
-    def __init__(self):
-        sleekxmpp.ClientXMPP.__init__(self, "admin@localhost", "decima123")
-        self.room = uuid.uuid4()
-        self.register_plugin('xep_0045')
-        self.register_plugin('xep_0030')  # Service Discovery
-        self.register_plugin('xep_0199')
-        self.add_event_handler("session_start", self.start)
-
-    def start(self, event):
-        """
-        Process the session_start event.
-
-        Typical actions for the session_start event are
-        requesting the roster and broadcasting an initial
-        presence stanza.
-
-        Arguments:
-            event -- An empty dictionary. The session_start
-                     event does not provide any additional
-                     data.
-        """
-        print "In get roster ", self.get_roster()
-        print "In get presence ", self.send_presence()
-
-    def add_user(self, nick):
-        print "room ,", self.room
-        print "Coming here ", nick
-        self.plugin['xep_0045'].joinMUC(self.room,
-                                        slugify(nick),
-                                        # If a room password is needed, use:
-                                        # password=the_room_password,
-                                        wait=True)
-        self.send_message(mto=self.room, mbody="Testing ", mtype="groupchat")
-
-
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
@@ -205,10 +168,13 @@ def question_invite(request):
     if request.method == "POST":
         for user in model["users"]:
             question.peers_involved.add(user)
+            vote = Vote(user_id=user, question=question)
+            vote.save()
         gcm_ids = [user.gcm_id for user in model["users"]]
         gcm = GCM(settings.GCM_API_KEY)
-        data = {"action": "invite","msg":"You are invited"}
+        data = {"action": "invite","msg":"Can you help me decide what to buy?"}
         gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
+        logger.debug(gcm_status)
         return Response({}, status=status.HTTP_200_OK)
     return render_to_response('question_invite.html', model, RequestContext(request))
 
