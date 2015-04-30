@@ -172,9 +172,11 @@ def question_invite(request):
             vote.save()
         gcm_ids = [user.gcm_id for user in model["users"]]
         gcm = GCM(settings.GCM_API_KEY)
-        data = {"action": "invite","msg":"Can you help me decide what to buy?"}
+        data = {"action": "invite", "msg":"Can you help me decide what to buy?"}
         gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
         logger.debug(gcm_status)
+        question.is_active = True
+        question.save()
         return Response({}, status=status.HTTP_200_OK)
     return render_to_response('question_invite.html', model, RequestContext(request))
 
