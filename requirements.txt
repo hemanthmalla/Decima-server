@@ -3,3 +3,4 @@ djangorestframework==3.0.4
 django-post-office==1.1.1
 python-gcm
 sleekxmpp
+requests

@@ -1,8 +1,9 @@
 import logging
 import json
 import datetime
-import urllib
+import urllib,requests
 from django.utils.text import slugify
+from requests.auth import HTTPBasicAuth
 
 from gcm import GCM
 from django.http import HttpResponse, JsonResponse
@@ -39,6 +40,11 @@ def createUser(request):
         serializer = UserSerializer(data=json_data)
         if serializer.is_valid():
             serializer.save()
+            url = 'http://128.199.164.21:8080/admin/server/localhost/users/'
+            payload = {'newusername': User.objects.get(phone=json_data["phone"]).id, 'newuserpassword': 'default', 'addnewuser':'Add User'}
+            headers = {'content-type': 'application/x-www-form-urlencoded'}
+            r = requests.post(url, data=payload, headers=headers, auth=('admin@localhost', 'decima123'))
+            logger.debug(r)
             return JSONResponse(serializer.data, status=201)
         logger.debug(serializer.errors)
         return JSONResponse(serializer.errors, status=400)
