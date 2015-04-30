@@ -38,4 +38,3 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ("id", "statement", "products", "is_active")
