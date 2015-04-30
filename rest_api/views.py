@@ -287,7 +287,7 @@ def post_product(request):
         self_vote.save()
     question.products.add(pr)
     question.save()
-    return Response({"user_id": user_id, "group": QuestionSerializer(question).data}, status=status.HTTP_200_OK)
+    return Response({"user_id": user_id, "group": QuestionSerializer(question, context={'user_id': user_id}).data}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
