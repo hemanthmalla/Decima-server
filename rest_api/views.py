@@ -111,9 +111,12 @@ def makeDecision(request):
     user_id = json_data["user_id"]
     options = json_data["options"]
     asked_to = json_data["asked_to"]
+    asked_by_user = User.objects.get(id=user_id)
     question = Question(statement=json_data["question"], date_time_asked=datetime.datetime.now(),
-                        asked_by=User.objects.get(id=user_id))
+                        asked_by=asked_by_user)
     question.save()
+    self_vote = Vote(user_id=asked_by_user, question=question)
+    self_vote.save()
     for i in options:
         option = Option(name=i, quest_id=question.id)
         option.save()
@@ -280,6 +283,8 @@ def post_product(request):
         question.is_active = False
         question.asked_by_id = user_id
         question.save()
+        self_vote = Vote(user_id=User.objects.get(id=user_id), question=question)
+        self_vote.save()
     question.products.add(pr)
     question.save()
     return Response({"user_id": user_id, "group": QuestionSerializer(question).data}, status=status.HTTP_200_OK)
