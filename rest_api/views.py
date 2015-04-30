@@ -131,7 +131,7 @@ def makeDecision(request):
     data = {"action": "Requesting your Opinion"}
     gcm_status = gcm.json_request(registration_ids=gcm_ids, data=data)
     logger.debug(gcm_status)
-    serializer = QuestionSerializer(question)
+    serializer = QuestionSerializer(question, context={'user_id': user_id})
     return JSONResponse(serializer.data)
 
 
