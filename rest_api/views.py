@@ -283,7 +283,7 @@ def post_product(request):
         question.is_active = False
         question.asked_by_id = user_id
         question.save()
-        self_vote = Vote(user_id=User.objects.get(id=user_id), question=question)
+        self_vote = Vote(user_id=User.objects.get(id=int(user_id)), question=question)
         self_vote.save()
     question.products.add(pr)
     question.save()
