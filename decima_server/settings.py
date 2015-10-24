@@ -13,8 +13,15 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 EMAIL_PORT = 587
 EMAIL_HOST = 'smtp.gmail.com'
+<<<<<<< Updated upstream
+=======
+EMAIL_HOST_USER = '******@***.com'
+EMAIL_HOST_PASSWORD = '*******'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "Decima Support<******@*****.com>)"
+>>>>>>> Stashed changes
 EMAIL_BACKEND = 'post_office.EmailBackend'
-GCM_API_KEY = 'AIzaSyCDJf1HfV7EniXFYPihb3bGI82V732Z6oU'
+GCM_API_KEY = '*****'
 
 
 # Quick-start development settings - unsuitable for production
